@@ -1,0 +1,3 @@
+# O script usa apenas a biblioteca padrao do Python (urllib, json, etc.)
+# Este ficheiro fica pronto caso queiras adicionar dependencias no futuro
+# (por exemplo requests, jinja2, etc.)

@@ -1,0 +1,35 @@
+name: Build daily tennis stat site
+
+on:
+  schedule:
+    # 06:00 UTC todos os dias -- ajusta a hora conforme preferires
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}   # permite correr manualmente no separador Actions
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Gerar site do dia
+        env:
+          APIKEY: ${{ secrets.API_TENNIS_KEY }}
+        run: python scripts/build_site.py
+
+      - name: Publicar alteracoes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git diff --staged --quiet || git commit -m "Atualizacao diaria: jogos de $(date -u +%Y-%m-%d)"
+          git push
